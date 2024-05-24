@@ -1,0 +1,94 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "File Microservice API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/projects": {
+        "post": {
+          "summary": "Create a new project",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Project created successfully"
+            }
+          }
+        }
+      },
+      "/projects/{date}": {
+        "get": {
+          "summary": "Get a project by date",
+          "parameters": [
+            {
+              "name": "date",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Project document downloaded"
+            },
+            "404": {
+              "description": "Project not found"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Project": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "modules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tasks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Task"
+              }
+            },
+            "materials": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "Task": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+  
