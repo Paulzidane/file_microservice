@@ -1,94 +1,197 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "File Microservice API",
-      "version": "1.0.0"
-    },
-    "paths": {
-      "/projects": {
-        "post": {
-          "summary": "Create a new project",
-          "requestBody": {
+  "openapi": "3.0.0",
+  "info": {
+    "title": "File Microservice API",
+    "version": "1.0.0",
+    "description": "API pour la gestion des projets de construction"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000"
+    }
+  ],
+  "paths": {
+    "/projects": {
+      "post": {
+        "summary": "Créer un nouveau projet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewProject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Projet créé avec succès",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "string"
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "Project created successfully"
-            }
-          }
-        }
-      },
-      "/projects/{date}": {
-        "get": {
-          "summary": "Get a project by date",
-          "parameters": [
-            {
-              "name": "date",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "date"
+          "500": {
+            "description": "Erreur lors de la création du projet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
               }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Project document downloaded"
-            },
-            "404": {
-              "description": "Project not found"
             }
           }
         }
       }
     },
-    "components": {
-      "schemas": {
-        "Project": {
-          "type": "object",
-          "properties": {
-            "name": {
+    "/projects/{name}/{date}": {
+      "get": {
+        "summary": "Récupérer un projet par son nom et sa date",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
               "type": "string"
-            },
-            "modules": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Projet téléchargé avec succès",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
-            },
-            "tasks": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Task"
-              }
-            },
-            "materials": {
-              "type": "array",
-              "items": {
-                "type": "string"
+            }
+          },
+          "404": {
+            "description": "Aucun projet trouvé avec ce nom et cette date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           }
-        },
-        "Task": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "duration": {
-              "type": "string"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NewProject": {
+        "type": "object",
+        "required": ["name", "description", "type"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["grand", "moyen", "petit"]
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "subModules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "endDate": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "unitPrice": {
+                  "type": "number"
+                },
+                "totalPrice": {
+                  "type": "number"
+                }
+              }
             }
           }
         }
       }
     }
   }
-  
+}
